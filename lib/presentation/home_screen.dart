@@ -8,6 +8,8 @@ class HomeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final getPockemons = ref.watch(getPockemonsProvider);
+    final result = ref.watch(getPockemonsProvider.future);
+    print(result.asStream().toString());
     return Scaffold(
       appBar: AppBar(
         title: const Text('Pockemon List'),

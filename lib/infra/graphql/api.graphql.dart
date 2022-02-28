@@ -7,20 +7,20 @@ import 'package:equatable/equatable.dart';
 import 'package:gql/ast.dart';
 part 'api.graphql.g.dart';
 
-mixin PokemonFieldMixin {
-  late String id;
-  String? name;
-  String? image;
-  List<String?>? types;
-}
-
 @JsonSerializable(explicitToJson: true)
-class GetPockemons$Query$Pokemon extends JsonSerializable
-    with EquatableMixin, PokemonFieldMixin {
+class GetPockemons$Query$Pokemon extends JsonSerializable with EquatableMixin {
   GetPockemons$Query$Pokemon();
 
   factory GetPockemons$Query$Pokemon.fromJson(Map<String, dynamic> json) =>
       _$GetPockemons$Query$PokemonFromJson(json);
+
+  late String id;
+
+  String? name;
+
+  String? image;
+
+  List<String?>? types;
 
   @override
   List<Object?> get props => [id, name, image, types];
@@ -56,45 +56,35 @@ final GET_POCKEMONS_QUERY_DOCUMENT = DocumentNode(definitions: [
             arguments: [
               ArgumentNode(
                   name: NameNode(value: 'first'),
-                  value: IntValueNode(value: '100'))
+                  value: IntValueNode(value: '300'))
             ],
             directives: [],
             selectionSet: SelectionSetNode(selections: [
-              FragmentSpreadNode(
-                  name: NameNode(value: 'pokemonField'), directives: [])
+              FieldNode(
+                  name: NameNode(value: 'id'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: null),
+              FieldNode(
+                  name: NameNode(value: 'name'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: null),
+              FieldNode(
+                  name: NameNode(value: 'image'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: null),
+              FieldNode(
+                  name: NameNode(value: 'types'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: null)
             ]))
-      ])),
-  FragmentDefinitionNode(
-      name: NameNode(value: 'pokemonField'),
-      typeCondition: TypeConditionNode(
-          on: NamedTypeNode(
-              name: NameNode(value: 'Pokemon'), isNonNull: false)),
-      directives: [],
-      selectionSet: SelectionSetNode(selections: [
-        FieldNode(
-            name: NameNode(value: 'id'),
-            alias: null,
-            arguments: [],
-            directives: [],
-            selectionSet: null),
-        FieldNode(
-            name: NameNode(value: 'name'),
-            alias: null,
-            arguments: [],
-            directives: [],
-            selectionSet: null),
-        FieldNode(
-            name: NameNode(value: 'image'),
-            alias: null,
-            arguments: [],
-            directives: [],
-            selectionSet: null),
-        FieldNode(
-            name: NameNode(value: 'types'),
-            alias: null,
-            arguments: [],
-            directives: [],
-            selectionSet: null)
       ]))
 ]);
 

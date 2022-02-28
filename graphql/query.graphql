@@ -1,7 +1,8 @@
 query getPockemons {
-  pokemons(
-    first: 100
-  ){
-    ...pokemonField
+  pokemons(first: 300) {
+    id
+    name
+    image
+    types
   }
 }

@@ -11,14 +11,21 @@ class HomeScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Pockemon List'),
+        actions: [
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(Icons.filter_alt_rounded),
+          )
+        ],
       ),
-      body: _gridView(ref),
+      body: _gridView(context, ref),
     );
   }
 
-  Widget _gridView(WidgetRef ref) {
+  Widget _gridView(BuildContext context, WidgetRef ref) {
     final pockemon = ref.watch(getPockemonsProvider);
     return Container(
+      color: Colors.blueGrey.withOpacity(0.5),
       child: pockemon.when(
         data: (pockemons) {
           return GridView.builder(
@@ -27,7 +34,7 @@ class HomeScreen extends ConsumerWidget {
             ),
             itemCount: pockemons.length,
             itemBuilder: (context, index) {
-              return _gridItem(pockemons[index]);
+              return _gridItem(context, pockemons[index]);
             },
           );
         },
@@ -37,18 +44,30 @@ class HomeScreen extends ConsumerWidget {
     );
   }
 
-  Widget _gridItem(PockemonModel pockemon) {
+  Widget _gridItem(BuildContext context, PockemonModel pockemon) {
     return Container(
-      color: Colors.blueGrey.withOpacity(0.5),
+      color: Colors.white,
       height: 60,
       width: double.infinity,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text('ID: ${pockemon.id}'),
-          Text('Name: ${pockemon.name}'),
-          Text('Types: ${pockemon.types.toString()}'),
-          Text('Image: ${pockemon.image}'),
+          SizedBox(
+            height: 100,
+            width: 100,
+            child: pockemon.image.isNotEmpty
+                ? Image.network(pockemon.image)
+                : Container(),
+          ),
+          //Text('ID: ${pockemon.id}'),
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 4),
+            child: Text(
+              pockemon.name,
+              style: Theme.of(context).textTheme.bodyText1,
+            ),
+          ),
+          Text(pockemon.types.toString()),
         ],
       ),
       margin: const EdgeInsets.symmetric(vertical: 2, horizontal: 2),

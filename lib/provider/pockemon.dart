@@ -9,13 +9,17 @@ final modalTitleProvider = StateProvider((ref) => 'showModalBottomSheet');
 const _baseUrl = 'https://graphql-pokemon2.vercel.app';
 
 final getPockemonsProvider = FutureProvider<List<PockemonModel>>((ref) async {
-  GQClient().setup(_baseUrl);
-  final query = GetPockemonsQuery();
-  final json = await GQClient().query(QueryOptions(document: query.document));
-  final result = GetPockemons$Query.fromJson(json);
-  print('result: ${result.toString()}');
-  final pockemons = result.pokemons
-      ?.map((pockemon) => PockemonModel.fromJson(pockemon))
-      .toList();
-  return pockemons ?? [];
+  try {
+    GQClient().setup(_baseUrl);
+    final query = GetPockemonsQuery();
+    final json = await GQClient().query(QueryOptions(document: query.document));
+    final result = GetPockemons$Query.fromJson(json);
+    final pockemons = result.pokemons
+        ?.map((pockemon) => PockemonModel.fromJson(pockemon))
+        .toList();
+    return pockemons ?? [];
+  } catch (e, m) {
+    print(m.toString());
+    return [];
+  }
 });

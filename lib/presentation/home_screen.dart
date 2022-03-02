@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pockemon_app/models/pockemon.dart';
+import 'package:pockemon_app/presentation/filter_screen.dart';
 import 'package:pockemon_app/provider/pockemon.dart';
 
 class HomeScreen extends ConsumerWidget {
@@ -13,7 +14,8 @@ class HomeScreen extends ConsumerWidget {
         title: const Text('Pockemon List'),
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (ctx) => const FilterScreen())),
             icon: const Icon(Icons.filter_alt_rounded),
           )
         ],
@@ -25,7 +27,7 @@ class HomeScreen extends ConsumerWidget {
   Widget _gridView(BuildContext context, WidgetRef ref) {
     final pockemon = ref.watch(getPockemonsProvider);
     return Container(
-      color: Colors.blueGrey.withOpacity(0.5),
+      color: Colors.blueGrey.withOpacity(0.2),
       child: pockemon.when(
         data: (pockemons) {
           return GridView.builder(
@@ -46,9 +48,12 @@ class HomeScreen extends ConsumerWidget {
 
   Widget _gridItem(BuildContext context, PockemonModel pockemon) {
     return Container(
-      color: Colors.white,
       height: 60,
       width: double.infinity,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+      ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -59,7 +64,6 @@ class HomeScreen extends ConsumerWidget {
                 ? Image.network(pockemon.image)
                 : Container(),
           ),
-          //Text('ID: ${pockemon.id}'),
           Container(
             padding: const EdgeInsets.symmetric(vertical: 4),
             child: Text(
@@ -70,7 +74,7 @@ class HomeScreen extends ConsumerWidget {
           Text(pockemon.types.toString()),
         ],
       ),
-      margin: const EdgeInsets.symmetric(vertical: 2, horizontal: 2),
+      margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
     );
   }
 }

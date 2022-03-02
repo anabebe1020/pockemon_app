@@ -43,6 +43,37 @@ class GetPockemons$Query extends JsonSerializable with EquatableMixin {
   Map<String, dynamic> toJson() => _$GetPockemons$QueryToJson(this);
 }
 
+@JsonSerializable(explicitToJson: true)
+class GetPockemonTypes$Query$Pokemon extends JsonSerializable
+    with EquatableMixin {
+  GetPockemonTypes$Query$Pokemon();
+
+  factory GetPockemonTypes$Query$Pokemon.fromJson(Map<String, dynamic> json) =>
+      _$GetPockemonTypes$Query$PokemonFromJson(json);
+
+  List<String?>? types;
+
+  @override
+  List<Object?> get props => [types];
+  @override
+  Map<String, dynamic> toJson() => _$GetPockemonTypes$Query$PokemonToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true)
+class GetPockemonTypes$Query extends JsonSerializable with EquatableMixin {
+  GetPockemonTypes$Query();
+
+  factory GetPockemonTypes$Query.fromJson(Map<String, dynamic> json) =>
+      _$GetPockemonTypes$QueryFromJson(json);
+
+  List<GetPockemonTypes$Query$Pokemon?>? pokemons;
+
+  @override
+  List<Object?> get props => [pokemons];
+  @override
+  Map<String, dynamic> toJson() => _$GetPockemonTypes$QueryToJson(this);
+}
+
 final GET_POCKEMONS_QUERY_DOCUMENT = DocumentNode(definitions: [
   OperationDefinitionNode(
       type: OperationType.query,
@@ -103,4 +134,48 @@ class GetPockemonsQuery
   @override
   GetPockemons$Query parse(Map<String, dynamic> json) =>
       GetPockemons$Query.fromJson(json);
+}
+
+final GET_POCKEMON_TYPES_QUERY_DOCUMENT = DocumentNode(definitions: [
+  OperationDefinitionNode(
+      type: OperationType.query,
+      name: NameNode(value: 'getPockemonTypes'),
+      variableDefinitions: [],
+      directives: [],
+      selectionSet: SelectionSetNode(selections: [
+        FieldNode(
+            name: NameNode(value: 'pokemons'),
+            alias: null,
+            arguments: [
+              ArgumentNode(
+                  name: NameNode(value: 'first'),
+                  value: IntValueNode(value: '100'))
+            ],
+            directives: [],
+            selectionSet: SelectionSetNode(selections: [
+              FieldNode(
+                  name: NameNode(value: 'types'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: null)
+            ]))
+      ]))
+]);
+
+class GetPockemonTypesQuery
+    extends GraphQLQuery<GetPockemonTypes$Query, JsonSerializable> {
+  GetPockemonTypesQuery();
+
+  @override
+  final DocumentNode document = GET_POCKEMON_TYPES_QUERY_DOCUMENT;
+
+  @override
+  final String operationName = 'getPockemonTypes';
+
+  @override
+  List<Object?> get props => [document, operationName];
+  @override
+  GetPockemonTypes$Query parse(Map<String, dynamic> json) =>
+      GetPockemonTypes$Query.fromJson(json);
 }

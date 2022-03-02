@@ -6,3 +6,9 @@ query getPockemons {
     types
   }
 }
+
+query getPockemonTypes {
+  pokemons(first: 100) {
+    types
+  }
+}

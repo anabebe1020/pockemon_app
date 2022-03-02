@@ -23,3 +23,23 @@ final getPockemonsProvider = FutureProvider<List<PockemonModel>>((ref) async {
     return [];
   }
 });
+
+final getPockemonTypesProvider = FutureProvider<List<String?>>((ref) async {
+  try {
+    GQClient().setup(_baseUrl);
+    final query = GetPockemonTypesQuery();
+    final json = await GQClient().query(QueryOptions(document: query.document));
+    final result = GetPockemonTypes$Query.fromJson(json);
+    final pockemons = result.pokemons;
+    List<String?> types = [];
+    if (pockemons != null) {
+      for (var pockemon in pockemons) {
+        types.addAll(pockemon?.types ?? []);
+      }
+    }
+    return types.toSet().toList();
+  } catch (e, m) {
+    print(m.toString());
+    return [];
+  }
+});

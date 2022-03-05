@@ -18,8 +18,6 @@ class GQClient {
   Future<Map<String, dynamic>> query(QueryOptions options) async {
     final headers = <String, String>{};
 
-    print('options: ${options.document.toString()}');
-
     final client = GraphQLClient(
       cache: GraphQLCache(),
       link: HttpLink(_baseUrl, defaultHeaders: headers),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pockemon_app/presentation/home_screen.dart';
+import 'package:pockemon_app/provider/pockemon.dart';
 
 void main() {
   runApp(const ProviderScope(child: MyApp()));
@@ -12,6 +13,7 @@ class MyApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    ref.watch(initGqlProvider.notifier);
     return MaterialApp(
       title: 'Pockemon App',
       theme: ThemeData(

@@ -22,3 +22,10 @@ class PockemonModel {
     );
   }
 }
+
+class FilterModel {
+  String label;
+  bool isCheck;
+
+  FilterModel({required this.label, this.isCheck = true});
+}

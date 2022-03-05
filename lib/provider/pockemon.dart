@@ -8,11 +8,19 @@ final modalTitleProvider = StateProvider((ref) => 'showModalBottomSheet');
 
 const _baseUrl = 'https://graphql-pokemon2.vercel.app';
 
+GQClient? pockemonServerClient;
+
+final initGqlProvider = StateProvider((ref) {
+  pockemonServerClient = GQClient();
+  pockemonServerClient!.setup(_baseUrl);
+});
+
 final getPockemonsProvider = FutureProvider<List<PockemonModel>>((ref) async {
   try {
-    GQClient().setup(_baseUrl);
+    print('getPockemons');
     final query = GetPockemonsQuery();
-    final json = await GQClient().query(QueryOptions(document: query.document));
+    final json = await pockemonServerClient!
+        .query(QueryOptions(document: query.document));
     final result = GetPockemons$Query.fromJson(json);
     final pockemons = result.pokemons
         ?.map((pockemon) => PockemonModel.fromJson(pockemon))
@@ -24,22 +32,50 @@ final getPockemonsProvider = FutureProvider<List<PockemonModel>>((ref) async {
   }
 });
 
-final getPockemonTypesProvider = FutureProvider<List<String?>>((ref) async {
-  try {
-    GQClient().setup(_baseUrl);
-    final query = GetPockemonTypesQuery();
-    final json = await GQClient().query(QueryOptions(document: query.document));
-    final result = GetPockemonTypes$Query.fromJson(json);
-    final pockemons = result.pokemons;
-    List<String?> types = [];
-    if (pockemons != null) {
-      for (var pockemon in pockemons) {
-        types.addAll(pockemon?.types ?? []);
-      }
-    }
-    return types.toSet().toList();
-  } catch (e, m) {
-    print(m.toString());
-    return [];
-  }
+final getPockemonTypeProvider = FutureProvider<List<FilterModel>>((ref) {
+  return ref.watch(filterProvider);
 });
+
+final filterProvider =
+    StateNotifierProvider<_FilterNotifier, List<FilterModel>>(
+  (ref) => _FilterNotifier(),
+);
+
+class _FilterNotifier extends StateNotifier<List<FilterModel>> {
+  _FilterNotifier() : super([]);
+
+  Future<void> getPockemonTypes() async {
+    print('getPockemonTypes');
+    try {
+      final query = GetPockemonTypesQuery();
+      final json = await pockemonServerClient!
+          .query(QueryOptions(document: query.document));
+      final result = GetPockemonTypes$Query.fromJson(json);
+      final pockemons = result.pokemons;
+      List<String> typeList = [];
+      if (pockemons != null) {
+        for (var pockemon in pockemons) {
+          if (pockemon != null) {
+            final types = pockemon.types;
+            if (types != null) {
+              for (String? type in types) {
+                if (type != null) {
+                  typeList.add(type);
+                }
+              }
+            }
+          }
+        }
+      }
+      typeList = typeList.toSet().toList();
+      state = typeList.map((type) => FilterModel(label: type)).toList();
+    } catch (e) {}
+  }
+
+  void onPressBox(int index, bool? value) {
+    print(value);
+    if (value != null) {
+      state[index].isCheck = value;
+    }
+  }
+}

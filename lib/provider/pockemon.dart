@@ -17,7 +17,6 @@ final initGqlProvider = StateProvider((ref) {
 
 final getPockemonsProvider = FutureProvider<List<PockemonModel>>((ref) async {
   try {
-    print('getPockemons');
     final query = GetPockemonsQuery();
     final json = await pockemonServerClient!
         .query(QueryOptions(document: query.document));
@@ -41,14 +40,13 @@ class _FilterNotifier extends StateNotifier<List<FilterModel>> {
   _FilterNotifier() : super([]);
 
   Future<void> getPockemonTypes() async {
-    print('getPockemonTypes');
     try {
       final query = GetPockemonTypesQuery();
       final json = await pockemonServerClient!
           .query(QueryOptions(document: query.document));
       final result = GetPockemonTypes$Query.fromJson(json);
       final pockemons = result.pokemons;
-      List<String> typeList = [];
+      List<String> typeList = ['All'];
       if (pockemons != null) {
         for (var pockemon in pockemons) {
           if (pockemon != null) {
@@ -69,8 +67,12 @@ class _FilterNotifier extends StateNotifier<List<FilterModel>> {
   }
 
   void onPressBox(int index, bool? value) {
-    final _state = state;
-    _state[index].isCheck = value!;
-    state = _state;
+    if (state[index].label == 'All') {
+      for (final filter in state) {
+        filter.isCheck = value!;
+      }
+    } else {
+      state[index].isCheck = value!;
+    }
   }
 }

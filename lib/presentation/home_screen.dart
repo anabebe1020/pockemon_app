@@ -30,13 +30,27 @@ class HomeScreen extends ConsumerWidget {
       color: Colors.blueGrey.withOpacity(0.2),
       child: pockemon.when(
         data: (pockemons) {
+          List<PockemonModel> filterdPockemons = [];
+          final filters = ref.watch(filterProvider);
+          for (final pockemon in pockemons) {
+            for (final type in pockemon.types) {
+              for (final filter in filters) {
+                if (type == filter.label) {
+                  filter.isCheck ? filterdPockemons.add(pockemon) : null;
+                  // TODO: チェック結果がおかしい
+                }
+              }
+            }
+          }
           return GridView.builder(
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
             ),
-            itemCount: pockemons.length,
+            itemCount:
+                filters.isEmpty ? pockemons.length : filterdPockemons.length,
             itemBuilder: (context, index) {
-              return _gridItem(context, pockemons[index]);
+              return _gridItem(context,
+                  filters.isEmpty ? pockemons[index] : filterdPockemons[index]);
             },
           );
         },

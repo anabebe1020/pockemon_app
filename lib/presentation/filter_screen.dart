@@ -11,7 +11,7 @@ class FilterScreen extends ConsumerStatefulWidget {
 }
 
 class _State extends ConsumerState<FilterScreen> {
-  List<FilterModel> _filters = [FilterModel(label: 'All')];
+  List<FilterModel> _filters = [];
 
   @override
   void initState() {
@@ -22,10 +22,7 @@ class _State extends ConsumerState<FilterScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final model = FilterModel(label: 'All');
-    final types = ref.watch(filterProvider);
-    _filters = [model, ...types];
-    print('rebuild');
+    _filters = ref.watch(filterProvider);
     //
     return Scaffold(
       appBar: AppBar(),
@@ -42,8 +39,6 @@ class _State extends ConsumerState<FilterScreen> {
   }
 
   Widget _typeList(int index) {
-    final notifier = ref.watch(filterProvider.notifier);
-    print('rebuild item');
     return Container(
       child: _filters[index].label.isNotEmpty
           ? CheckboxListTile(
@@ -53,7 +48,9 @@ class _State extends ConsumerState<FilterScreen> {
                 style: const TextStyle(fontSize: 20),
               ),
               controlAffinity: ListTileControlAffinity.leading,
-              onChanged: (bool? value) => notifier.onPressBox(index, value),
+              onChanged: (bool? value) => setState(() {
+                ref.read(filterProvider.notifier).onPressBox(index, value);
+              }),
             )
           : Container(),
     );

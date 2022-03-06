@@ -3,41 +3,53 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pockemon_app/models/pockemon.dart';
 import 'package:pockemon_app/provider/pockemon.dart';
 
-class FilterScreen extends ConsumerWidget {
+class FilterScreen extends ConsumerStatefulWidget {
   const FilterScreen({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<FilterScreen> createState() => _State();
+}
+
+class _State extends ConsumerState<FilterScreen> {
+  List<FilterModel> _filters = [FilterModel(label: 'All')];
+
+  @override
+  void initState() {
+    final notifier = ref.read(filterProvider.notifier);
+    notifier.getPockemonTypes();
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final model = FilterModel(label: 'All');
-    final notifier = ref.watch(getPockemonTypeProvider);
+    final types = ref.watch(filterProvider);
+    _filters = [model, ...types];
+    print('rebuild');
     //
     return Scaffold(
       appBar: AppBar(),
       body: Container(
-        child: notifier.when(
-            data: (types) {
-              final filters = [model, ...types];
-              return ListView.builder(
-                itemCount: filters.length,
-                itemBuilder: (context, index) {
-                  return _typeList(ref, filters[index], index);
-                },
-              );
-            },
-            error: (error, stack) => Text('Error: $error'),
-            loading: () => const CircularProgressIndicator()),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+        child: ListView.builder(
+          itemCount: _filters.length,
+          itemBuilder: (context, index) {
+            return _typeList(index);
+          },
+        ),
       ),
     );
   }
 
-  Widget _typeList(WidgetRef ref, FilterModel model, int index) {
+  Widget _typeList(int index) {
     final notifier = ref.watch(filterProvider.notifier);
+    print('rebuild item');
     return Container(
-      child: model.label.isNotEmpty
+      child: _filters[index].label.isNotEmpty
           ? CheckboxListTile(
-              value: model.isCheck,
+              value: _filters[index].isCheck,
               title: Text(
-                model.label,
+                _filters[index].label,
                 style: const TextStyle(fontSize: 20),
               ),
               controlAffinity: ListTileControlAffinity.leading,

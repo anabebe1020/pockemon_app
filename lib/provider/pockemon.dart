@@ -32,10 +32,6 @@ final getPockemonsProvider = FutureProvider<List<PockemonModel>>((ref) async {
   }
 });
 
-final getPockemonTypeProvider = FutureProvider<List<FilterModel>>((ref) {
-  return ref.watch(filterProvider);
-});
-
 final filterProvider =
     StateNotifierProvider<_FilterNotifier, List<FilterModel>>(
   (ref) => _FilterNotifier(),
@@ -73,9 +69,8 @@ class _FilterNotifier extends StateNotifier<List<FilterModel>> {
   }
 
   void onPressBox(int index, bool? value) {
-    print(value);
-    if (value != null) {
-      state[index].isCheck = value;
-    }
+    final _state = state;
+    _state[index].isCheck = value!;
+    state = _state;
   }
 }

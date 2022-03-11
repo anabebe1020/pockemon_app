@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pockemon_app/models/pockemon.dart';
+import 'package:pockemon_app/models/pockemon_state.dart';
 import 'package:pockemon_app/presentation/filter_screen.dart';
 import 'package:pockemon_app/provider/pockemon.dart';
 
@@ -25,42 +25,50 @@ class HomeScreen extends ConsumerWidget {
   }
 
   Widget _gridView(BuildContext context, WidgetRef ref) {
-    final pockemon = ref.watch(getPockemonsProvider);
+    final pockemonProvider = ref.watch(getPockemonsProvider);
+    final filters = ref.watch(filterProvider);
+    print('HomeScreen _gridView');
     return Container(
       color: Colors.blueGrey.withOpacity(0.2),
-      child: pockemon.when(
+      child: pockemonProvider.when(
         data: (pockemons) {
-          List<PockemonModel> filterdPockemons = [];
-          final filters = ref.watch(filterProvider);
-          for (final pockemon in pockemons) {
-            for (final type in pockemon.types) {
-              for (final filter in filters) {
-                if (type == filter.label) {
-                  filter.isCheck ? filterdPockemons.add(pockemon) : null;
-                  // TODO: チェック結果がおかしい
-                }
+          List<PockemonState> filteredPockemons = [];
+          final filtersIsChecked =
+              filters.where((filter) => filter.isCheck!).toList();
+          for (final filter in filtersIsChecked) {
+            for (final pockemon in pockemons) {
+              final types = pockemon.types;
+              if (types != null) {
+                final result = types.indexWhere((type) => type == filter.label);
+                result > 0 ? filteredPockemons.add(pockemon) : null;
               }
             }
           }
-          return GridView.builder(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-            ),
-            itemCount:
-                filters.isEmpty ? pockemons.length : filterdPockemons.length,
-            itemBuilder: (context, index) {
-              return _gridItem(context,
-                  filters.isEmpty ? pockemons[index] : filterdPockemons[index]);
-            },
-          );
+          return pockemons.isNotEmpty
+              ? GridView.builder(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                  ),
+                  itemCount: filters.isEmpty
+                      ? pockemons.length
+                      : filteredPockemons.length,
+                  itemBuilder: (context, index) {
+                    return _gridItem(
+                        context,
+                        filters.isEmpty
+                            ? pockemons[index]
+                            : filteredPockemons[index]);
+                  },
+                )
+              : _empty(context);
         },
         error: (error, stack) => Text('Error: $error'),
-        loading: () => const CircularProgressIndicator(),
+        loading: () => const Center(child: CircularProgressIndicator()),
       ),
     );
   }
 
-  Widget _gridItem(BuildContext context, PockemonModel pockemon) {
+  Widget _gridItem(BuildContext context, PockemonState pockemon) {
     return Container(
       height: 60,
       width: double.infinity,
@@ -74,14 +82,14 @@ class HomeScreen extends ConsumerWidget {
           SizedBox(
             height: 100,
             width: 100,
-            child: pockemon.image.isNotEmpty
-                ? Image.network(pockemon.image)
+            child: pockemon.image != null && pockemon.image!.isNotEmpty
+                ? Image.network(pockemon.image!)
                 : Container(),
           ),
           Container(
             padding: const EdgeInsets.symmetric(vertical: 4),
             child: Text(
-              pockemon.name,
+              pockemon.name ?? '',
               style: Theme.of(context).textTheme.bodyText1,
             ),
           ),
@@ -89,6 +97,12 @@ class HomeScreen extends ConsumerWidget {
         ],
       ),
       margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
+    );
+  }
+
+  Widget _empty(BuildContext context) {
+    return const Center(
+      child: Text('該当するポケモンはいません', style: TextStyle(fontSize: 44)),
     );
   }
 }

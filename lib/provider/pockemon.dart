@@ -2,7 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:graphql/client.dart';
 import 'package:pockemon_app/infra/graphql/api.dart';
 import 'package:pockemon_app/infra/graphql_client.dart';
-import 'package:pockemon_app/models/pockemon.dart';
+import 'package:pockemon_app/models/pockemon_state.dart';
 
 final modalTitleProvider = StateProvider((ref) => 'showModalBottomSheet');
 
@@ -15,31 +15,31 @@ final initGqlProvider = StateProvider((ref) {
   pockemonServerClient!.setup(_baseUrl);
 });
 
-final getPockemonsProvider = FutureProvider<List<PockemonModel>>((ref) async {
+final getPockemonsProvider = FutureProvider<List<PockemonState>>((ref) async {
   try {
     final query = GetPockemonsQuery();
     final json = await pockemonServerClient!
         .query(QueryOptions(document: query.document));
     final result = GetPockemons$Query.fromJson(json);
     final pockemons = result.pokemons
-        ?.map((pockemon) => PockemonModel.fromJson(pockemon))
+        ?.map((pockemon) => PockemonState.fromJson(pockemon))
         .toList();
     return pockemons ?? [];
   } catch (e, m) {
-    print(m.toString());
     return [];
   }
 });
 
 final filterProvider =
-    StateNotifierProvider<_FilterNotifier, List<FilterModel>>(
+    StateNotifierProvider<_FilterNotifier, List<FilterState>>(
   (ref) => _FilterNotifier(),
 );
 
-class _FilterNotifier extends StateNotifier<List<FilterModel>> {
+class _FilterNotifier extends StateNotifier<List<FilterState>> {
   _FilterNotifier() : super([]);
 
   Future<void> getPockemonTypes() async {
+    print('getPockemonTypes');
     try {
       final query = GetPockemonTypesQuery();
       final json = await pockemonServerClient!
@@ -62,17 +62,17 @@ class _FilterNotifier extends StateNotifier<List<FilterModel>> {
         }
       }
       typeList = typeList.toSet().toList();
-      state = typeList.map((type) => FilterModel(label: type)).toList();
+      state = typeList
+          .map((type) => FilterState(label: type, isCheck: true))
+          .toList();
     } catch (e) {}
   }
 
   void onPressBox(int index, bool? value) {
     if (state[index].label == 'All') {
-      for (final filter in state) {
-        filter.isCheck = value!;
-      }
+      state = state.map((filter) => filter.copyWith(isCheck: value)).toList();
     } else {
-      state[index].isCheck = value!;
+      state[index] = state[index].copyWith(isCheck: value);
     }
   }
 }

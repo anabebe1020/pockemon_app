@@ -19,6 +19,7 @@ dependencies:
   artemis: ^7.2.3-beta
   build_runner: ^2.1.7
   json_serializable: ^6.1.4
+  freezed: ^1.1.0
 
 dev_dependencies:
   flutter_test:

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pockemon_app/models/pockemon.dart';
+import 'package:pockemon_app/models/pockemon_state.dart';
 import 'package:pockemon_app/provider/pockemon.dart';
 
 class FilterScreen extends ConsumerStatefulWidget {
@@ -11,7 +11,7 @@ class FilterScreen extends ConsumerStatefulWidget {
 }
 
 class _State extends ConsumerState<FilterScreen> {
-  List<FilterModel> _filters = [];
+  List<FilterState> _filters = [];
 
   @override
   void initState() {
@@ -40,11 +40,11 @@ class _State extends ConsumerState<FilterScreen> {
 
   Widget _typeList(int index) {
     return Container(
-      child: _filters[index].label.isNotEmpty
+      child: _filters[index].label != null && _filters[index].label!.isNotEmpty
           ? CheckboxListTile(
               value: _filters[index].isCheck,
               title: Text(
-                _filters[index].label,
+                _filters[index].label!,
                 style: const TextStyle(fontSize: 20),
               ),
               controlAffinity: ListTileControlAffinity.leading,

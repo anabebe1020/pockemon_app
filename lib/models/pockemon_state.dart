@@ -21,11 +21,3 @@ class PockemonState with _$PockemonState {
     );
   }
 }
-
-@freezed
-class FilterState with _$FilterState {
-  const factory FilterState({
-    String? label,
-    bool? isCheck,
-  }) = _FilterState;
-}

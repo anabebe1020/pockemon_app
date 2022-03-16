@@ -1,14 +1,25 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pockemon_app/models/pockemon_state.dart';
 import 'package:pockemon_app/presentation/filter_screen.dart';
-import 'package:pockemon_app/provider/pockemon.dart';
+import 'package:pockemon_app/provider/pockemon_provider.dart';
+import 'package:pockemon_app/widget/general_error.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    print('HomeScreen build');
+    // init
+    WidgetsBinding.instance?.addPostFrameCallback((_) {
+      ref
+          .watch(pockemonProvider.notifier)
+          .init()
+          .catchError(generalErrorHandlerOf(context));
+    });
+    // scaffold
     return Scaffold(
       appBar: AppBar(
         title: const Text('Pockemon List'),
@@ -25,46 +36,21 @@ class HomeScreen extends ConsumerWidget {
   }
 
   Widget _gridView(BuildContext context, WidgetRef ref) {
-    final pockemonProvider = ref.watch(getPockemonsProvider);
-    final filters = ref.watch(filterProvider);
+    final provider = ref.watch(pockemonProvider);
     print('HomeScreen _gridView');
     return Container(
       color: Colors.blueGrey.withOpacity(0.2),
-      child: pockemonProvider.when(
-        data: (pockemons) {
-          List<PockemonState> filteredPockemons = [];
-          final filtersIsChecked =
-              filters.where((filter) => filter.isCheck!).toList();
-          for (final filter in filtersIsChecked) {
-            for (final pockemon in pockemons) {
-              final types = pockemon.types;
-              if (types != null) {
-                final result = types.indexWhere((type) => type == filter.label);
-                result > 0 ? filteredPockemons.add(pockemon) : null;
-              }
-            }
-          }
-          return pockemons.isNotEmpty
-              ? GridView.builder(
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                  ),
-                  itemCount: filters.isEmpty
-                      ? pockemons.length
-                      : filteredPockemons.length,
-                  itemBuilder: (context, index) {
-                    return _gridItem(
-                        context,
-                        filters.isEmpty
-                            ? pockemons[index]
-                            : filteredPockemons[index]);
-                  },
-                )
-              : _empty(context);
-        },
-        error: (error, stack) => Text('Error: $error'),
-        loading: () => const Center(child: CircularProgressIndicator()),
-      ),
+      child: provider.isNotEmpty
+          ? GridView.builder(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+              ),
+              itemCount: provider.length,
+              itemBuilder: (context, index) {
+                return _gridItem(context, provider[index]);
+              },
+            )
+          : _empty(context),
     );
   }
 
@@ -101,8 +87,11 @@ class HomeScreen extends ConsumerWidget {
   }
 
   Widget _empty(BuildContext context) {
-    return const Center(
-      child: Text('該当するポケモンはいません', style: TextStyle(fontSize: 44)),
+    return Container(
+      alignment: Alignment.center,
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: const CupertinoActivityIndicator(),
+      //const Text('該当するポケモンはいません', style: TextStyle(fontSize: 44)),
     );
   }
 }

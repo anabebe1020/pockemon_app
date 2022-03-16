@@ -1,58 +1,86 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pockemon_app/models/pockemon_state.dart';
-import 'package:pockemon_app/provider/pockemon.dart';
+import 'package:pockemon_app/models/filter_state.dart';
+import 'package:pockemon_app/provider/filter_provider.dart';
+import 'package:pockemon_app/widget/general_error.dart';
 
-class FilterScreen extends ConsumerStatefulWidget {
+class FilterScreen extends ConsumerWidget {
   const FilterScreen({Key? key}) : super(key: key);
 
   @override
-  ConsumerState<FilterScreen> createState() => _State();
-}
-
-class _State extends ConsumerState<FilterScreen> {
-  List<FilterState> _filters = [];
-
-  @override
-  void initState() {
-    final notifier = ref.read(filterProvider.notifier);
-    notifier.getPockemonTypes();
-    super.initState();
+  Widget build(BuildContext context, WidgetRef ref) {
+    print('FilterScreen build');
+    // init
+    WidgetsBinding.instance?.addPostFrameCallback((_) {
+      ref
+          .watch(filterProvider.notifier)
+          .init()
+          .catchError(generalErrorHandlerOf(context));
+    });
+    // scaffold
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Filter'),
+      ),
+      body: _body(context, ref),
+    );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    _filters = ref.watch(filterProvider);
-    //
-    return Scaffold(
-      appBar: AppBar(),
-      body: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-        child: ListView.builder(
-          itemCount: _filters.length,
-          itemBuilder: (context, index) {
-            return _typeList(index);
-          },
-        ),
+  Widget _body(BuildContext context, WidgetRef ref) {
+    final provider = ref.watch(filterProvider);
+    final checkboxes = provider.checkboxes;
+    print('FilterScreen body: $provider');
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+      child: ListView(
+        children: [
+          provider.isAllChecked != null
+              ? CheckboxListTile(
+                  value: provider.isAllChecked,
+                  title: const Text('All', style: TextStyle(fontSize: 20)),
+                  controlAffinity: ListTileControlAffinity.leading,
+                  onChanged: (bool? value) =>
+                      ref.watch(filterProvider.notifier).onPressAll(value),
+                )
+              : Container(),
+          checkboxes != null && checkboxes.isNotEmpty
+              ? ListView.builder(
+                  itemCount: checkboxes.length,
+                  itemBuilder: (context, index) {
+                    return _typeList(checkboxes[index], ref);
+                  },
+                )
+              : _empty(context),
+        ],
       ),
     );
   }
 
-  Widget _typeList(int index) {
+  Widget _typeList(CheckBoxModel state, WidgetRef ref) {
+    final label = state.label;
     return Container(
-      child: _filters[index].label != null && _filters[index].label!.isNotEmpty
+      child: label != null
           ? CheckboxListTile(
-              value: _filters[index].isCheck,
+              value: state.isCheck,
               title: Text(
-                _filters[index].label!,
+                label,
                 style: const TextStyle(fontSize: 20),
               ),
               controlAffinity: ListTileControlAffinity.leading,
-              onChanged: (bool? value) => setState(() {
-                ref.read(filterProvider.notifier).onPressBox(index, value);
-              }),
+              onChanged: (bool? value) =>
+                  ref.watch(filterProvider.notifier).onPressBox(label, value),
             )
           : Container(),
+    );
+  }
+
+  Widget _empty(BuildContext context) {
+    return Container(
+      alignment: Alignment.center,
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: const CupertinoActivityIndicator(),
+      //const Text('該当するポケモンはいません', style: TextStyle(fontSize: 44)),
     );
   }
 }

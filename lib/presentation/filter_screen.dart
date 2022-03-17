@@ -10,7 +10,6 @@ class FilterScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    print('FilterScreen build');
     // init
     WidgetsBinding.instance?.addPostFrameCallback((_) {
       ref
@@ -30,10 +29,11 @@ class FilterScreen extends ConsumerWidget {
   Widget _body(BuildContext context, WidgetRef ref) {
     final provider = ref.watch(filterProvider);
     final checkboxes = provider.checkboxes;
-    print('FilterScreen body: $provider');
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       child: ListView(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
         children: [
           provider.isAllChecked != null
               ? CheckboxListTile(
@@ -46,6 +46,7 @@ class FilterScreen extends ConsumerWidget {
               : Container(),
           checkboxes != null && checkboxes.isNotEmpty
               ? ListView.builder(
+                  shrinkWrap: true,
                   itemCount: checkboxes.length,
                   itemBuilder: (context, index) {
                     return _typeList(checkboxes[index], ref);
@@ -80,7 +81,6 @@ class FilterScreen extends ConsumerWidget {
       alignment: Alignment.center,
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: const CupertinoActivityIndicator(),
-      //const Text('該当するポケモンはいません', style: TextStyle(fontSize: 44)),
     );
   }
 }

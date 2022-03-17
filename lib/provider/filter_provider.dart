@@ -15,11 +15,10 @@ class _FilterNotifier extends StateNotifier<FilterState> {
   _FilterNotifier(this.ref) : super(const FilterState());
 
   Future<void> init() async {
-    print('_FilterNotifier init');
     try {
-      final pockemonTypes = ref.read(_getPockemonTypesProvider);
-      final value = pockemonTypes.value;
-      state = value ?? const FilterState(isAllChecked: true);
+      if (state.isAllChecked != null) return;
+      final value = ref.watch(_getPockemonTypesProvider).value;
+      state = value ?? const FilterState();
     } catch (e) {
       rethrow;
     }
@@ -31,7 +30,8 @@ class _FilterNotifier extends StateNotifier<FilterState> {
             .map((box) => CheckBoxModel(label: box.label, isCheck: value!))
             .toList()
         : null;
-    state.copyWith(isAllChecked: value, checkboxes: boxes);
+    state = state.copyWith(isAllChecked: value, checkboxes: boxes);
+    state = state.copyWith(isAllChecked: value);
   }
 
   void onPressBox(String label, bool? value) {
@@ -41,12 +41,13 @@ class _FilterNotifier extends StateNotifier<FilterState> {
         checkbox.label == label ? checkbox.isCheck = value! : null;
       }
     }
-    state.copyWith(checkboxes: checkboxes);
+    state = state.copyWith(checkboxes: checkboxes);
   }
 }
 
 // GraphQL query
 final _getPockemonTypesProvider = FutureProvider<FilterState>((ref) async {
+  print('_getPockemonTypesProvider');
   try {
     final query = GetPockemonTypesQuery();
     final json = await pockemonServerClient!

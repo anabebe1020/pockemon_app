@@ -11,7 +11,6 @@ class HomeScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    print('HomeScreen build');
     // init
     WidgetsBinding.instance?.addPostFrameCallback((_) {
       ref
@@ -37,7 +36,6 @@ class HomeScreen extends ConsumerWidget {
 
   Widget _gridView(BuildContext context, WidgetRef ref) {
     final provider = ref.watch(pockemonProvider);
-    print('HomeScreen _gridView');
     return Container(
       color: Colors.blueGrey.withOpacity(0.2),
       child: provider.isNotEmpty
@@ -90,8 +88,8 @@ class HomeScreen extends ConsumerWidget {
     return Container(
       alignment: Alignment.center,
       padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: const CupertinoActivityIndicator(),
-      //const Text('該当するポケモンはいません', style: TextStyle(fontSize: 44)),
+      child: //const CupertinoActivityIndicator(),
+          const Text('該当するポケモンはいません', style: TextStyle(fontSize: 24)),
     );
   }
 }

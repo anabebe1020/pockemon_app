@@ -3,6 +3,7 @@ import 'package:graphql/client.dart';
 import 'package:pockemon_app/infra/graphql/api.dart';
 import 'package:pockemon_app/infra/pockemon_client.dart';
 import 'package:pockemon_app/models/pockemon_state.dart';
+import 'package:pockemon_app/provider/filter_provider.dart';
 
 // to View
 final pockemonProvider =
@@ -16,11 +17,37 @@ class _PockemonNotifier extends StateNotifier<List<PockemonState>> {
   _PockemonNotifier(this.ref) : super([]);
 
   Future<void> init() async {
-    print('_PockemonNotifier init');
     try {
-      final pockemons = ref.read(_getPockemonsProvider);
-      final value = pockemons.value;
-      state = value ?? [];
+      final value = ref.watch(_getPockemonsProvider).value;
+      //
+      if (value == null) {
+        state = [];
+        return;
+      }
+      // no filter
+      final filter = ref.watch(filterProvider);
+      final isAllChecked = filter.isAllChecked;
+      final checkboxes = filter.checkboxes;
+      if (isAllChecked == null || checkboxes == null) {
+        state = value;
+        return;
+      }
+      // filter
+      List<PockemonState> filtered = [];
+      for (final pockemon in value) {
+        for (final box in checkboxes) {
+          box.isCheck ? filtered.add(pockemon) : null;
+        }
+      }
+      state = filtered;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> filtering() async {
+    try {
+      final value = ref.watch(_getPockemonsProvider).value;
     } catch (e) {
       rethrow;
     }

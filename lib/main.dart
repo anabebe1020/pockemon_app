@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pockemon_app/infra/pockemon_client.dart';
 import 'package:pockemon_app/presentation/home_screen.dart';
+import 'package:pockemon_app/provider/pockemon_provider.dart';
+import 'package:pockemon_app/widget/general_error.dart';
 
 void main() {
   runApp(const ProviderScope(child: MyApp()));
@@ -14,6 +16,13 @@ class MyApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     ref.watch(initGqlProvider.notifier);
+    WidgetsBinding.instance?.addPostFrameCallback((_) {
+      ref
+          .watch(pockemonProvider.notifier)
+          .init()
+          .catchError(generalErrorHandlerOf(context));
+    });
+    //
     return MaterialApp(
       title: 'Pockemon App',
       theme: ThemeData(

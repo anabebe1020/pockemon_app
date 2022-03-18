@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pockemon_app/models/pockemon_state.dart';
 import 'package:pockemon_app/presentation/filter_screen.dart';
 import 'package:pockemon_app/provider/pockemon_provider.dart';
-import 'package:pockemon_app/widget/general_error.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -12,12 +11,12 @@ class HomeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // init
-    WidgetsBinding.instance?.addPostFrameCallback((_) {
-      ref
-          .watch(pockemonProvider.notifier)
-          .init()
-          .catchError(generalErrorHandlerOf(context));
-    });
+    //WidgetsBinding.instance?.addPostFrameCallback((_) {
+    //  ref
+    //      .watch(pockemonProvider.notifier)
+    //      .init()
+    //      .catchError(generalErrorHandlerOf(context));
+    //});
     // scaffold
     return Scaffold(
       appBar: AppBar(

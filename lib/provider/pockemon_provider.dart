@@ -36,18 +36,14 @@ class _PockemonNotifier extends StateNotifier<List<PockemonState>> {
       List<PockemonState> filtered = [];
       for (final pockemon in value) {
         for (final box in checkboxes) {
-          box.isCheck ? filtered.add(pockemon) : null;
+          final types = pockemon.types;
+          if (types == null) break;
+          for (final type in types) {
+            box.isCheck && box.label == type ? filtered.add(pockemon) : null;
+          }
         }
       }
-      state = filtered;
-    } catch (e) {
-      rethrow;
-    }
-  }
-
-  Future<void> filtering() async {
-    try {
-      final value = ref.watch(_getPockemonsProvider).value;
+      state = filtered.toSet().toList();
     } catch (e) {
       rethrow;
     }

@@ -1,8 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pockemon_app/models/pockemon_state.dart';
 import 'package:pockemon_app/presentation/filter_screen.dart';
+import 'package:pockemon_app/presentation/pockemon_detail_screen.dart';
 import 'package:pockemon_app/provider/pockemon_provider.dart';
 
 class HomeScreen extends ConsumerWidget {
@@ -10,13 +10,6 @@ class HomeScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // init
-    //WidgetsBinding.instance?.addPostFrameCallback((_) {
-    //  ref
-    //      .watch(pockemonProvider.notifier)
-    //      .init()
-    //      .catchError(generalErrorHandlerOf(context));
-    //});
     // scaffold
     return Scaffold(
       appBar: AppBar(
@@ -52,34 +45,41 @@ class HomeScreen extends ConsumerWidget {
   }
 
   Widget _gridItem(BuildContext context, PockemonState pockemon) {
-    return Container(
-      height: 60,
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          SizedBox(
-            height: 100,
-            width: 100,
-            child: pockemon.image != null && pockemon.image!.isNotEmpty
-                ? Image.network(pockemon.image!)
-                : Container(),
-          ),
-          Container(
-            padding: const EdgeInsets.symmetric(vertical: 4),
-            child: Text(
-              pockemon.name ?? '',
-              style: Theme.of(context).textTheme.bodyText1,
+    return GestureDetector(
+      child: Container(
+        height: 60,
+        width: double.infinity,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(
+              height: 100,
+              width: 100,
+              child: pockemon.image != null && pockemon.image!.isNotEmpty
+                  ? Image.network(pockemon.image!)
+                  : Container(),
             ),
-          ),
-          Text(pockemon.types.toString()),
-        ],
+            Container(
+              padding: const EdgeInsets.symmetric(vertical: 4),
+              child: Text(
+                pockemon.name ?? '',
+                style: Theme.of(context).textTheme.bodyText1,
+              ),
+            ),
+            Text(pockemon.types.toString()),
+          ],
+        ),
+        margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
       ),
-      margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
+      onTap: () => Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (_) => PockemonDetailScreen(pockemon: pockemon),
+        ),
+      ),
     );
   }
 

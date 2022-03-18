@@ -1,11 +1,45 @@
 query getPockemons {
   pokemons(first: 300) {
-    ...pokemonField
+    id
+    number
+    name
+    weight {
+      minimum
+      maximum
+    }
+    height {
+      minimum
+      maximum
+    }
+    classification
+    types
+    resistant
+    attacks {
+      fast {
+        name
+        type
+        damage
+      }
+      special {
+        name
+        type
+        damage
+      }
+    }
+    weaknesses
+    fleeRate
+    maxCP
+    evolutionRequirements {
+      amount
+      name
+    }
+    maxHP
+    image
   }
 }
 
 query getPockemonTypes {
   pokemons(first: 100) {
-    ...pokemonField
+    types
   }
 }

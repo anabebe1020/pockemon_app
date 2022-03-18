@@ -47,7 +47,6 @@ class _FilterNotifier extends StateNotifier<FilterState> {
 
 // GraphQL query
 final _getPockemonTypesProvider = FutureProvider<FilterState>((ref) async {
-  print('_getPockemonTypesProvider');
   try {
     final query = GetPockemonTypesQuery();
     final json = await pockemonServerClient!

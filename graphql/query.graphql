@@ -1,14 +1,11 @@
 query getPockemons {
   pokemons(first: 300) {
-    id
-    name
-    image
-    types
+    ...pokemonField
   }
 }
 
 query getPockemonTypes {
   pokemons(first: 100) {
-    types
+    ...pokemonField
   }
 }

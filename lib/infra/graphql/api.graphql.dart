@@ -7,23 +7,55 @@ import 'package:equatable/equatable.dart';
 import 'package:gql/ast.dart';
 part 'api.graphql.g.dart';
 
+mixin PokemonFieldMixin {
+  late String id;
+  String? number;
+  String? name;
+  PokemonFieldMixin$PokemonDimension? weight;
+  PokemonFieldMixin$PokemonDimension? height;
+  String? classification;
+  List<String?>? types;
+  List<String?>? resistant;
+  PokemonFieldMixin$PokemonAttack? attacks;
+  List<String?>? weaknesses;
+  double? fleeRate;
+  int? maxCP;
+  PokemonFieldMixin$PokemonEvolutionRequirement? evolutionRequirements;
+  int? maxHP;
+  String? image;
+}
+mixin AttackMixin {
+  String? name;
+  String? type;
+  int? damage;
+}
+
 @JsonSerializable(explicitToJson: true)
-class GetPockemons$Query$Pokemon extends JsonSerializable with EquatableMixin {
+class GetPockemons$Query$Pokemon extends JsonSerializable
+    with EquatableMixin, PokemonFieldMixin {
   GetPockemons$Query$Pokemon();
 
   factory GetPockemons$Query$Pokemon.fromJson(Map<String, dynamic> json) =>
       _$GetPockemons$Query$PokemonFromJson(json);
 
-  late String id;
-
-  String? name;
-
-  String? image;
-
-  List<String?>? types;
-
   @override
-  List<Object?> get props => [id, name, image, types];
+  List<Object?> get props => [
+        id,
+        number,
+        name,
+        weight,
+        height,
+        classification,
+        types,
+        resistant,
+        attacks,
+        weaknesses,
+        fleeRate,
+        maxCP,
+        evolutionRequirements,
+        maxHP,
+        image
+      ];
   @override
   Map<String, dynamic> toJson() => _$GetPockemons$Query$PokemonToJson(this);
 }
@@ -44,17 +76,106 @@ class GetPockemons$Query extends JsonSerializable with EquatableMixin {
 }
 
 @JsonSerializable(explicitToJson: true)
-class GetPockemonTypes$Query$Pokemon extends JsonSerializable
+class PokemonFieldMixin$PokemonDimension extends JsonSerializable
     with EquatableMixin {
+  PokemonFieldMixin$PokemonDimension();
+
+  factory PokemonFieldMixin$PokemonDimension.fromJson(
+          Map<String, dynamic> json) =>
+      _$PokemonFieldMixin$PokemonDimensionFromJson(json);
+
+  String? minimum;
+
+  String? maximum;
+
+  @override
+  List<Object?> get props => [minimum, maximum];
+  @override
+  Map<String, dynamic> toJson() =>
+      _$PokemonFieldMixin$PokemonDimensionToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true)
+class PokemonFieldMixin$PokemonAttack$Attack extends JsonSerializable
+    with EquatableMixin, AttackMixin {
+  PokemonFieldMixin$PokemonAttack$Attack();
+
+  factory PokemonFieldMixin$PokemonAttack$Attack.fromJson(
+          Map<String, dynamic> json) =>
+      _$PokemonFieldMixin$PokemonAttack$AttackFromJson(json);
+
+  @override
+  List<Object?> get props => [name, type, damage];
+  @override
+  Map<String, dynamic> toJson() =>
+      _$PokemonFieldMixin$PokemonAttack$AttackToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true)
+class PokemonFieldMixin$PokemonAttack extends JsonSerializable
+    with EquatableMixin {
+  PokemonFieldMixin$PokemonAttack();
+
+  factory PokemonFieldMixin$PokemonAttack.fromJson(Map<String, dynamic> json) =>
+      _$PokemonFieldMixin$PokemonAttackFromJson(json);
+
+  List<PokemonFieldMixin$PokemonAttack$Attack?>? fast;
+
+  List<PokemonFieldMixin$PokemonAttack$Attack?>? special;
+
+  @override
+  List<Object?> get props => [fast, special];
+  @override
+  Map<String, dynamic> toJson() =>
+      _$PokemonFieldMixin$PokemonAttackToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true)
+class PokemonFieldMixin$PokemonEvolutionRequirement extends JsonSerializable
+    with EquatableMixin {
+  PokemonFieldMixin$PokemonEvolutionRequirement();
+
+  factory PokemonFieldMixin$PokemonEvolutionRequirement.fromJson(
+          Map<String, dynamic> json) =>
+      _$PokemonFieldMixin$PokemonEvolutionRequirementFromJson(json);
+
+  int? amount;
+
+  String? name;
+
+  @override
+  List<Object?> get props => [amount, name];
+  @override
+  Map<String, dynamic> toJson() =>
+      _$PokemonFieldMixin$PokemonEvolutionRequirementToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true)
+class GetPockemonTypes$Query$Pokemon extends JsonSerializable
+    with EquatableMixin, PokemonFieldMixin {
   GetPockemonTypes$Query$Pokemon();
 
   factory GetPockemonTypes$Query$Pokemon.fromJson(Map<String, dynamic> json) =>
       _$GetPockemonTypes$Query$PokemonFromJson(json);
 
-  List<String?>? types;
-
   @override
-  List<Object?> get props => [types];
+  List<Object?> get props => [
+        id,
+        number,
+        name,
+        weight,
+        height,
+        classification,
+        types,
+        resistant,
+        attacks,
+        weaknesses,
+        fleeRate,
+        maxCP,
+        evolutionRequirements,
+        maxHP,
+        image
+      ];
   @override
   Map<String, dynamic> toJson() => _$GetPockemonTypes$Query$PokemonToJson(this);
 }
@@ -91,8 +212,142 @@ final GET_POCKEMONS_QUERY_DOCUMENT = DocumentNode(definitions: [
             ],
             directives: [],
             selectionSet: SelectionSetNode(selections: [
+              FragmentSpreadNode(
+                  name: NameNode(value: 'pokemonField'), directives: [])
+            ]))
+      ])),
+  FragmentDefinitionNode(
+      name: NameNode(value: 'pokemonField'),
+      typeCondition: TypeConditionNode(
+          on: NamedTypeNode(
+              name: NameNode(value: 'Pokemon'), isNonNull: false)),
+      directives: [],
+      selectionSet: SelectionSetNode(selections: [
+        FieldNode(
+            name: NameNode(value: 'id'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null),
+        FieldNode(
+            name: NameNode(value: 'number'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null),
+        FieldNode(
+            name: NameNode(value: 'name'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null),
+        FieldNode(
+            name: NameNode(value: 'weight'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: SelectionSetNode(selections: [
               FieldNode(
-                  name: NameNode(value: 'id'),
+                  name: NameNode(value: 'minimum'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: null),
+              FieldNode(
+                  name: NameNode(value: 'maximum'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: null)
+            ])),
+        FieldNode(
+            name: NameNode(value: 'height'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: SelectionSetNode(selections: [
+              FieldNode(
+                  name: NameNode(value: 'minimum'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: null),
+              FieldNode(
+                  name: NameNode(value: 'maximum'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: null)
+            ])),
+        FieldNode(
+            name: NameNode(value: 'classification'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null),
+        FieldNode(
+            name: NameNode(value: 'types'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null),
+        FieldNode(
+            name: NameNode(value: 'resistant'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null),
+        FieldNode(
+            name: NameNode(value: 'attacks'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: SelectionSetNode(selections: [
+              FieldNode(
+                  name: NameNode(value: 'fast'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: SelectionSetNode(selections: [
+                    FragmentSpreadNode(
+                        name: NameNode(value: 'attack'), directives: [])
+                  ])),
+              FieldNode(
+                  name: NameNode(value: 'special'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: SelectionSetNode(selections: [
+                    FragmentSpreadNode(
+                        name: NameNode(value: 'attack'), directives: [])
+                  ]))
+            ])),
+        FieldNode(
+            name: NameNode(value: 'weaknesses'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null),
+        FieldNode(
+            name: NameNode(value: 'fleeRate'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null),
+        FieldNode(
+            name: NameNode(value: 'maxCP'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null),
+        FieldNode(
+            name: NameNode(value: 'evolutionRequirements'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: SelectionSetNode(selections: [
+              FieldNode(
+                  name: NameNode(value: 'amount'),
                   alias: null,
                   arguments: [],
                   directives: [],
@@ -102,20 +357,45 @@ final GET_POCKEMONS_QUERY_DOCUMENT = DocumentNode(definitions: [
                   alias: null,
                   arguments: [],
                   directives: [],
-                  selectionSet: null),
-              FieldNode(
-                  name: NameNode(value: 'image'),
-                  alias: null,
-                  arguments: [],
-                  directives: [],
-                  selectionSet: null),
-              FieldNode(
-                  name: NameNode(value: 'types'),
-                  alias: null,
-                  arguments: [],
-                  directives: [],
                   selectionSet: null)
-            ]))
+            ])),
+        FieldNode(
+            name: NameNode(value: 'maxHP'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null),
+        FieldNode(
+            name: NameNode(value: 'image'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null)
+      ])),
+  FragmentDefinitionNode(
+      name: NameNode(value: 'attack'),
+      typeCondition: TypeConditionNode(
+          on: NamedTypeNode(name: NameNode(value: 'Attack'), isNonNull: false)),
+      directives: [],
+      selectionSet: SelectionSetNode(selections: [
+        FieldNode(
+            name: NameNode(value: 'name'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null),
+        FieldNode(
+            name: NameNode(value: 'type'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null),
+        FieldNode(
+            name: NameNode(value: 'damage'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null)
       ]))
 ]);
 
@@ -153,13 +433,190 @@ final GET_POCKEMON_TYPES_QUERY_DOCUMENT = DocumentNode(definitions: [
             ],
             directives: [],
             selectionSet: SelectionSetNode(selections: [
+              FragmentSpreadNode(
+                  name: NameNode(value: 'pokemonField'), directives: [])
+            ]))
+      ])),
+  FragmentDefinitionNode(
+      name: NameNode(value: 'pokemonField'),
+      typeCondition: TypeConditionNode(
+          on: NamedTypeNode(
+              name: NameNode(value: 'Pokemon'), isNonNull: false)),
+      directives: [],
+      selectionSet: SelectionSetNode(selections: [
+        FieldNode(
+            name: NameNode(value: 'id'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null),
+        FieldNode(
+            name: NameNode(value: 'number'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null),
+        FieldNode(
+            name: NameNode(value: 'name'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null),
+        FieldNode(
+            name: NameNode(value: 'weight'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: SelectionSetNode(selections: [
               FieldNode(
-                  name: NameNode(value: 'types'),
+                  name: NameNode(value: 'minimum'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: null),
+              FieldNode(
+                  name: NameNode(value: 'maximum'),
                   alias: null,
                   arguments: [],
                   directives: [],
                   selectionSet: null)
-            ]))
+            ])),
+        FieldNode(
+            name: NameNode(value: 'height'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: SelectionSetNode(selections: [
+              FieldNode(
+                  name: NameNode(value: 'minimum'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: null),
+              FieldNode(
+                  name: NameNode(value: 'maximum'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: null)
+            ])),
+        FieldNode(
+            name: NameNode(value: 'classification'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null),
+        FieldNode(
+            name: NameNode(value: 'types'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null),
+        FieldNode(
+            name: NameNode(value: 'resistant'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null),
+        FieldNode(
+            name: NameNode(value: 'attacks'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: SelectionSetNode(selections: [
+              FieldNode(
+                  name: NameNode(value: 'fast'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: SelectionSetNode(selections: [
+                    FragmentSpreadNode(
+                        name: NameNode(value: 'attack'), directives: [])
+                  ])),
+              FieldNode(
+                  name: NameNode(value: 'special'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: SelectionSetNode(selections: [
+                    FragmentSpreadNode(
+                        name: NameNode(value: 'attack'), directives: [])
+                  ]))
+            ])),
+        FieldNode(
+            name: NameNode(value: 'weaknesses'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null),
+        FieldNode(
+            name: NameNode(value: 'fleeRate'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null),
+        FieldNode(
+            name: NameNode(value: 'maxCP'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null),
+        FieldNode(
+            name: NameNode(value: 'evolutionRequirements'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: SelectionSetNode(selections: [
+              FieldNode(
+                  name: NameNode(value: 'amount'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: null),
+              FieldNode(
+                  name: NameNode(value: 'name'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: null)
+            ])),
+        FieldNode(
+            name: NameNode(value: 'maxHP'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null),
+        FieldNode(
+            name: NameNode(value: 'image'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null)
+      ])),
+  FragmentDefinitionNode(
+      name: NameNode(value: 'attack'),
+      typeCondition: TypeConditionNode(
+          on: NamedTypeNode(name: NameNode(value: 'Attack'), isNonNull: false)),
+      directives: [],
+      selectionSet: SelectionSetNode(selections: [
+        FieldNode(
+            name: NameNode(value: 'name'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null),
+        FieldNode(
+            name: NameNode(value: 'type'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null),
+        FieldNode(
+            name: NameNode(value: 'damage'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null)
       ]))
 ]);
 

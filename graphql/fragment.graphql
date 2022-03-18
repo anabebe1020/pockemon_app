@@ -1,6 +1,39 @@
 fragment pokemonField on Pokemon {
   id
+  number
   name
-  image
+  weight {
+    minimum
+    maximum
+  }
+  height {
+    minimum
+    maximum
+  }
+  classification
   types
+  resistant
+  attacks {
+    fast {
+      ...attack
+    }
+    special {
+      ...attack
+    }
+  }
+  weaknesses
+  fleeRate
+  maxCP
+  evolutionRequirements {
+    amount
+    name
+  }
+  maxHP
+  image
+}
+
+fragment attack on Attack {
+  name
+  type
+  damage
 }

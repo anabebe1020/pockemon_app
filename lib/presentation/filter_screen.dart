@@ -33,7 +33,7 @@ class FilterScreen extends ConsumerWidget {
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       child: ListView(
         shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
+        //physics: const NeverScrollableScrollPhysics(),
         children: [
           provider.isAllChecked != null
               ? CheckboxListTile(
@@ -51,6 +51,7 @@ class FilterScreen extends ConsumerWidget {
                   itemBuilder: (context, index) {
                     return _typeList(checkboxes[index], ref);
                   },
+                  physics: const NeverScrollableScrollPhysics(),
                 )
               : _empty(context),
         ],

@@ -24,7 +24,7 @@ class MyApp extends ConsumerWidget {
     });
     //
     return MaterialApp(
-      title: 'Pockemon App',
+      title: 'POKEBEBE',
       theme: ThemeData(
         primarySwatch: Colors.blueGrey,
         textTheme: GoogleFonts.montserratTextTheme(

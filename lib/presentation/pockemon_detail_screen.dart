@@ -40,8 +40,15 @@ class PockemonDetailScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(pockemon.name ?? 'Unknown'),
-              Text(pockemon.types.toString()),
+              Container(
+                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  child: const Text(
+                    '基本情報',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  )),
+              _BaseInfoItemWidget(text: 'No. ${pockemon.number}'),
+              _BaseInfoItemWidget(text: pockemon.name ?? 'Unknown'),
+              _BaseInfoItemWidget(text: pockemon.types.toString()),
             ],
           ),
         ),
@@ -50,16 +57,55 @@ class PockemonDetailScreen extends StatelessWidget {
   }
 
   Widget _subInfo() {
+    final evolve = '${pockemon.evolveName}: ${pockemon.evolveAmount}';
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('classification: ${pockemon.classification}'),
-          Text('resistant: ${pockemon.resistant}'),
-          Text('weaknesses: ${pockemon.weaknesses}'),
-          Text('evolveAmount: ${pockemon.evolveAmount}'),
-          Text('evolveName: ${pockemon.evolveName}'),
+          _SubInfoItemWidget(label: '種別', text: pockemon.classification),
+          _SubInfoItemWidget(label: '耐性', text: pockemon.resistant.toString()),
+          _SubInfoItemWidget(label: '耐性', text: pockemon.weaknesses.toString()),
+          _SubInfoItemWidget(label: '進化', text: evolve),
+        ],
+      ),
+    );
+  }
+}
+
+class _BaseInfoItemWidget extends StatelessWidget {
+  final String text;
+  const _BaseInfoItemWidget({required this.text}) : super();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Text(
+        text,
+        style: const TextStyle(fontSize: 20),
+      ),
+    );
+  }
+}
+
+class _SubInfoItemWidget extends StatelessWidget {
+  final String label;
+  final String? text;
+  const _SubInfoItemWidget({required this.label, required this.text}) : super();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        children: [
+          SizedBox(
+            width: 60,
+            child: Text(label,
+                style: const TextStyle(fontWeight: FontWeight.bold)),
+          ),
+          Expanded(child: Text(text ?? '')),
         ],
       ),
     );

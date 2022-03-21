@@ -65,7 +65,7 @@ class PockemonDetailScreen extends StatelessWidget {
         children: [
           _SubInfoItemWidget(label: '種別', text: pockemon.classification),
           _SubInfoItemWidget(label: '耐性', text: pockemon.resistant.toString()),
-          _SubInfoItemWidget(label: '耐性', text: pockemon.weaknesses.toString()),
+          _SubInfoItemWidget(label: '弱点', text: pockemon.weaknesses.toString()),
           _SubInfoItemWidget(label: '進化', text: evolve),
         ],
       ),

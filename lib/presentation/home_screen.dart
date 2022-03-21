@@ -13,7 +13,7 @@ class HomeScreen extends ConsumerWidget {
     // scaffold
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Pockemon List'),
+        title: const Text('ポケモンやつら'),
         actions: [
           IconButton(
             onPressed: () => Navigator.of(context).push(

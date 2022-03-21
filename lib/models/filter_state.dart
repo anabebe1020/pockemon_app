@@ -1,5 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:pockemon_app/infra/graphql/api.dart';
+import 'package:pockemon_app/utils/translation.dart';
 
 part 'filter_state.freezed.dart';
 
@@ -22,7 +23,7 @@ class FilterState with _$FilterState {
           if (types != null) {
             for (final type in types) {
               if (type != null) {
-                typeList.add(type);
+                typeList.add(typeEnToJp(type));
               }
             }
           }

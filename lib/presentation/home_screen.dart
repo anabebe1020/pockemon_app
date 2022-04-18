@@ -1,9 +1,11 @@
+import 'package:anabebe_packages/widget/pull_refresh_scroll_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pockemon_app/models/pockemon_state.dart';
 import 'package:pockemon_app/presentation/filter_screen.dart';
 import 'package:pockemon_app/presentation/pockemon_detail_screen.dart';
 import 'package:pockemon_app/provider/pockemon_provider.dart';
+import 'package:pockemon_app/widget/general_error.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -13,23 +15,35 @@ class HomeScreen extends ConsumerWidget {
     // scaffold
     return Scaffold(
       appBar: AppBar(
-        title: const Text('ポケモンやつら'),
+        title: const Text(
+          'ポケモンやつら',
+          style: TextStyle(color: Colors.blueGrey),
+        ),
+        elevation: 0,
+        backgroundColor: Colors.blueGrey.shade50,
         actions: [
           IconButton(
             onPressed: () => Navigator.of(context).push(
                 MaterialPageRoute(builder: (ctx) => const FilterScreen())),
-            icon: const Icon(Icons.filter_alt_rounded),
+            icon: const Icon(Icons.filter_alt_rounded, color: Colors.blueGrey),
           )
         ],
       ),
-      body: _gridView(context, ref),
+      backgroundColor: Colors.blueGrey.shade50,
+      body: PullRefreshScrollView(
+        scrollController: ScrollController(),
+        child: _gridView(context, ref),
+        onRefresh: () => ref
+            .watch(pockemonProvider.notifier)
+            .init()
+            .catchError(generalErrorHandlerOf(context)),
+      ),
     );
   }
 
   Widget _gridView(BuildContext context, WidgetRef ref) {
     final provider = ref.watch(pockemonProvider);
     return Container(
-      color: Colors.blueGrey.withOpacity(0.2),
       child: provider.isNotEmpty
           ? GridView.builder(
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -39,6 +53,8 @@ class HomeScreen extends ConsumerWidget {
               itemBuilder: (context, index) {
                 return _gridItem(context, provider[index]);
               },
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
             )
           : _empty(context),
     );

@@ -20,8 +20,15 @@ class FilterScreen extends ConsumerWidget {
     // scaffold
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Filter'),
+        title: const Text(
+          'Filter',
+          style: TextStyle(color: Colors.blueGrey),
+        ),
+        elevation: 0,
+        backgroundColor: Colors.blueGrey.shade50,
+        foregroundColor: Colors.blueGrey,
       ),
+      backgroundColor: Colors.blueGrey.shade50,
       body: _body(context, ref),
     );
   }

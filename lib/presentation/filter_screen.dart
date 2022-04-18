@@ -21,7 +21,7 @@ class FilterScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Filter',
+          '絞り込み',
           style: TextStyle(color: Colors.blueGrey),
         ),
         elevation: 0,

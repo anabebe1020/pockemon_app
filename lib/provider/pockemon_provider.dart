@@ -1,9 +1,12 @@
+import 'package:anabebe_packages/utils/log.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:graphql/client.dart';
 import 'package:pockemon_app/infra/graphql/api.dart';
 import 'package:pockemon_app/infra/pockemon_client.dart';
 import 'package:pockemon_app/models/pockemon_state.dart';
 import 'package:pockemon_app/provider/filter_provider.dart';
+
+final pLogger = Logger();
 
 // to View
 final pockemonProvider =
@@ -17,7 +20,9 @@ class _PockemonNotifier extends StateNotifier<List<PockemonState>> {
   _PockemonNotifier(this.ref) : super([]);
 
   Future<void> init() async {
+    pLogger.setup('pockemon');
     try {
+      pLogger.log('init start');
       final value = ref.watch(_getPockemonsProvider).value;
       //
       if (value == null) {
@@ -46,6 +51,8 @@ class _PockemonNotifier extends StateNotifier<List<PockemonState>> {
       state = filtered.toSet().toList();
     } catch (e) {
       rethrow;
+    } finally {
+      pLogger.log('init end');
     }
   }
 }
@@ -53,6 +60,7 @@ class _PockemonNotifier extends StateNotifier<List<PockemonState>> {
 // GraphQL query
 final _getPockemonsProvider = FutureProvider<List<PockemonState>>((ref) async {
   try {
+    pLogger.log('_getPockemonsProvider start');
     final query = GetPockemonsQuery();
     final json = await pockemonServerClient!
         .query(QueryOptions(document: query.document));
@@ -63,5 +71,7 @@ final _getPockemonsProvider = FutureProvider<List<PockemonState>>((ref) async {
     return pockemons ?? [];
   } catch (e) {
     return [];
+  } finally {
+    pLogger.log('_getPockemonsProvider end');
   }
 });

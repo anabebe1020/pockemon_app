@@ -1,3 +1,4 @@
+import 'package:anabebe_packages/anabebe_packages.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -15,6 +16,8 @@ class MyApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final logger = Logger();
+    logger.setup('main');
     ref.watch(initGqlProvider.notifier);
     WidgetsBinding.instance?.addPostFrameCallback((_) {
       ref
@@ -22,6 +25,7 @@ class MyApp extends ConsumerWidget {
           .init()
           .catchError(generalErrorHandlerOf(context));
     });
+    logger.log('app start');
     //
     return MaterialApp(
       title: 'POKEBEBE',

@@ -68,12 +68,24 @@ class HomeScreen extends ConsumerWidget {
               child: Text(
                 pockemon.name ?? '',
                 style: Theme.of(context).textTheme.bodyText1,
+                maxLines: 1,
               ),
             ),
-            Text(pockemon.types.toString()),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: Text(
+                pockemon.types.toString().substring(
+                      1,
+                      pockemon.types.toString().length - 1,
+                    ),
+                style: const TextStyle(fontSize: 14),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+              ),
+            ),
           ],
         ),
-        margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
+        margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 6),
       ),
       onTap: () => Navigator.of(context).push(
         MaterialPageRoute(
